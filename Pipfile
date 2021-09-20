@@ -1,0 +1,26 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+dnnv = "*"
+onnxruntime = "*"
+
+[packages]
+numpy = "<1.20"
+scipy = "*"
+setuptools = "*"
+torch = "*"
+torchvision = "*"
+pillow = "*"
+psutil = "*"
+onnx = "*"
+tqdm = "*"
+xpress = "==8.11"
+matplotlib = "*"
+netron = "*"
+
+
+[requires]
+python_version = "3.7"
