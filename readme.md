@@ -185,6 +185,9 @@ be reduced to reduce the memory requirements at the cost of computational perfor
 SIP-variant. Should be enabled if the input-dimensionality is significantly smaller 
 than the size of the network (e.g. less than 50 input nodes with more than 10k Relu nodes).
 
+### Contact:
+
+verinet-CO@groups.imperial.ac.uk
 
 ### Authors:
 
