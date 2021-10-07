@@ -117,6 +117,8 @@ class VeriNet:
 
         self._init_workers()
 
+        self._handle_memory()
+
     # noinspection PyArgumentList
     def __del__(self):
 
@@ -198,7 +200,8 @@ class VeriNet:
 
         elif CONFIG.CHILDPROC_TYPE == "forkserver":
             ctx = mp.get_context("forkserver")
-            ctx.set_forkserver_preload(['.verifier', '.objective', 'multiprocessing.managers', 'pickle', 'Objective', 'Verifier', 'BaseManager'])
+            ctx.set_forkserver_preload(['.verifier', '.objective', 'multiprocessing.managers', 'pickle', 'Objective',
+                                        'Verifier', 'BaseManager'])
             return ctx
 
         else:
@@ -261,7 +264,7 @@ class VeriNet:
 
         self._set_activate_master_worker_flags()
         self._set_activate_slave_workers_flags()
-        did_timeout = self._wait_for_workers(start_time, timeout - (time.time() - start_time))
+        did_timeout = self._wait_for_workers(timeout - (time.time() - start_time))
 
         self._suspend_workers()
 
@@ -295,6 +298,8 @@ class VeriNet:
             The status object.
         """
 
+        logger.debug(f"Starting one-shot attempt")
+
         objective.model.set_device(use_gpu=self._master_worker_should_use_gpu)
         solver = Verifier(objective.model, objective, use_progress_bars=False)
         status = Status.Undecided
@@ -326,6 +331,9 @@ class VeriNet:
             self.counter_example = self._counter_example
 
         objective.model.set_device(use_gpu=False)
+
+        logger.debug(f"One-shot attempt finished with status: {status}")
+
         return status
 
     def _set_activate_master_worker_flags(self):
@@ -417,7 +425,7 @@ class VeriNet:
             self._log_mp_values()
             raise ChildProcessError("At least one worker did not suspend as expected")
 
-    def _wait_for_workers(self, start_time: float, timeout: float):
+    def _wait_for_workers(self, timeout: float):
 
         """
         Wait until children are done.
@@ -435,7 +443,7 @@ class VeriNet:
         """
 
         logger.debug("Main process waiting for workers")
-        did_timeout = not self._finished_flag.wait(timeout=timeout - (time.time() - start_time))
+        did_timeout = not self._finished_flag.wait(timeout=timeout)
         logger.debug(f"Main process finished waiting, timeout={timeout}")
 
         return did_timeout
@@ -458,6 +466,11 @@ class VeriNet:
             if worker.exitcode is None:
                 logger.warning(f"Main process could not join with worker, terminating instead")
                 worker.terminate()
+
+        self._workers = None
+        self._activate_slave_workers.clear()
+        self._activate_master_worker.clear()
+        self._destroy_flag.clear()
 
         logger.debug(f"Main process finished joining workers")
 
@@ -497,10 +510,11 @@ class VeriNet:
                     self._active_tasks.value -= 1
                 continue
 
+            logger.debug(f"Worker {os.getpid()} started iteration, active tasks: {self._active_tasks.value}")
             self._verify_branch(branch, solver)
             self._finished_subtree(solver.max_depth, solver.branches_explored, solver.status, solver.counter_example)
             logger.debug(f"Worker {os.getpid()} finished iteration, Status: {solver.status}, "
-                         f"Active tasks: {self._active_tasks.value}")
+                         f"active tasks: {self._active_tasks.value}")
 
     def _verify_branch(self, branch: Branch, solver: Verifier):
 
@@ -668,13 +682,17 @@ class VeriNet:
         second best solution and creates only minimal overhead.
         """
 
+        logger.debug(f"Memory usage: {psutil.virtual_memory()[2]}")
+
         if self._initial_mem_usage is None:
             self._initial_mem_usage = psutil.virtual_memory()[2]
 
         elif (psutil.virtual_memory()[2] - self._initial_mem_usage) > CONFIG.MAX_ACCEPTED_MEMORY_INCREASE:
+            logger.debug(f"Max accepted memory increase exceeded, performing cleanup.")
             self.cleanup()
             self._branch_queue = self._mp_context.Manager().Queue()
             self._initial_mem_usage = psutil.virtual_memory()[2]
+            self._init_workers()
 
     def _reset_params(self):
 
