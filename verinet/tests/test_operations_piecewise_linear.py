@@ -84,3 +84,26 @@ class TestOperationsPiecewiseLinear(unittest.TestCase):
         split_point = self.relu.split_point(-2.5, 2)
 
         self.assertAlmostEqual(split_point, 0)
+
+    def test_backprop_through_relaxation_relu(self):
+
+        """
+        Tests the _backprop_through_relaxation_relu method.
+        """
+
+        bounds_symbolic_post = torch.FloatTensor([[1, 2, 1],
+                                                  [-1, -2, 0]])
+
+        bounds_concrete_pre = torch.FloatTensor([[0, 10], [-10, 10]])
+        relaxations = torch.FloatTensor([[[0.2, 0], [0.1, 0]],
+                                         [[2, 2], [0.5, 1]]])
+
+        res, _, _, _ = self.relu.backprop_through_relaxation(bounds_symbolic_post=bounds_symbolic_post,
+                                                             bounds_concrete_pre=bounds_concrete_pre,
+                                                             relaxations=relaxations,
+                                                             lower=True)
+        gt = torch.FloatTensor([[1, 0.2, 1], [-1, -1, -2]])
+
+        for i in range(gt.shape[0]):
+            for j in range(gt.shape[1]):
+                self.assertEqual(float(res[0][i, j]), float(gt[i, j]))

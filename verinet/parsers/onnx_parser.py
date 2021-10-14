@@ -53,6 +53,9 @@ class ONNXParser:
             import dnnv
             op_graph = dnnv.nn.parse(Path(filepath)).simplify()
             self._model = op_graph.as_onnx()
+        except ModuleNotFoundError:
+            logger.warning("DNNV pacakge not found, attempting to proceed without network simplification.")
+            self._model = onnx.load(filepath)
         except ImportError:
             logger.warning("DNNV pacakge not found, attempting to proceed without network simplification.")
             self._model = onnx.load(filepath)
@@ -325,6 +328,11 @@ class ONNXParser:
                 raise ValueError(f"Found more than one input connection to {node}")
             return [VeriNetNNNode(idx_num, nn.ReLU(), input_connections)]
 
+        elif node.op_type == "PRelu":
+            if len(node.input) !=  2:
+                raise ValueError(f"Found more than one input connection to {node}")
+            return self.prelu_to_verinet_nn_node(node, idx_num)
+
         elif node.op_type == "Sigmoid":
             input_connections = self._get_connections_to(node)
             if len(input_connections) > 1:
@@ -426,6 +434,32 @@ class ONNXParser:
         else:
             logger.warning(f"Node not recognised: \n{node}")
             return None
+
+    # noinspection PyArgumentList,PyCallingNonCallable
+    def prelu_to_verinet_nn_node(self, node, idx_num: int) -> list:
+
+        """
+        Converts a onnx 'gemm' node to a Linear verinet_nn_node.
+
+        Args:
+            node:
+                The Gemm node.
+            idx_num:
+                The index of the current node.
+        Returns:
+            A list containing the torch Linear node.
+        """
+
+        [weights] = [onnx.numpy_helper.to_array(t) for t in self._model.graph.initializer if t.name == node.input[1]]
+
+        prelu = nn.PReLU(len(weights))
+        prelu.weight.data = self._tensor_type(weights.copy())
+
+        input_connections = self._get_connections_to(node)
+        if len(input_connections) > 1:
+            raise ValueError(f"Found more than one input connection to {node}")
+
+        return [VeriNetNNNode(idx_num, prelu, input_connections)]
 
     # noinspection PyArgumentList,PyCallingNonCallable
     def gemm_to_verinet_nn_node(self, node, idx_num: int) -> list:
@@ -971,7 +1005,7 @@ class ONNXParser:
 
         return [VeriNetNNNode(idx_num, Transpose(perm_dims), input_connections)]
 
-    # noinspection PyCallingNonCallable
+    # noinspection PyCallingNonCallable,PyTypeChecker
     def maxpool_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
@@ -1034,7 +1068,7 @@ class ONNXParser:
         layers.append(nn.ReLU())
 
         # Remaining vertical
-        for i in range(kernel_shape[0] // 2 - 1):
+        for i in range(torch.trunc(kernel_shape[0] / 2) - 1):
             layers.append(nn.Conv2d(in_channels=num_channels*2, out_channels=num_channels*2, groups=num_channels,
                                     kernel_size=(2, 1), stride=(2, 1), bias=False))
             layers[-1].weight.data[::2] = self._tensor_type([[[1], [0]], [[1], [0]]])
@@ -1054,7 +1088,7 @@ class ONNXParser:
         layers.append(nn.ReLU())
 
         # Remaining horizontal
-        for i in range(kernel_shape[0] // 2 - 1):
+        for i in range(torch.trunc(kernel_shape[0] / 2) - 1):
             layers.append(nn.Conv2d(in_channels=num_channels * 2, out_channels=num_channels * 2, groups=num_channels,
                                     kernel_size=(1, 2), stride=(1, 2), bias=False))
             layers[-1].weight.data[::2] = self._tensor_type([[[1, 0]], [[1, 0]]])

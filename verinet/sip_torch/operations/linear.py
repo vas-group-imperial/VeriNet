@@ -817,8 +817,8 @@ class Conv2d(AbstractOperation):
 
         params = self.params
         channels = params["out_channels"]
-        height = (in_shape[1] - params["kernel_size"][0] + 2 * params["padding"][0]) // params["stride"][0] + 1
-        width = (in_shape[2] - params["kernel_size"][1] + 2 * params["padding"][1]) // params["stride"][1] + 1
+        height = int(in_shape[1] - params["kernel_size"][0] + 2 * params["padding"][0]) // int(params["stride"][0]) + 1
+        width = int(in_shape[2] - params["kernel_size"][1] + 2 * params["padding"][1]) // int(params["stride"][1]) + 1
 
         return torch.LongTensor((channels, height, width))
 
@@ -985,8 +985,8 @@ class AvgPool2d(AbstractOperation):
         if isinstance(params["stride"], int):
             params["stride"] = (params["stride"], params["stride"])
 
-        height = (in_shape[1] - params["kernel_size"][0] + 2 * params["padding"][0]) // params["stride"][0] + 1
-        width = (in_shape[2] - params["kernel_size"][1] + 2 * params["padding"][1]) // params["stride"][1] + 1
+        height = int(in_shape[1] - params["kernel_size"][0] + 2 * params["padding"][0]) // int(params["stride"][0]) + 1
+        width = int(in_shape[2] - params["kernel_size"][1] + 2 * params["padding"][1]) // int(params["stride"][1]) + 1
 
         return torch.LongTensor((channels, height, width))
 

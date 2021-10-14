@@ -213,6 +213,8 @@ class VeriNet:
         Initialises workers
         """
 
+        self._all_children_done.clear()
+
         if self._workers is None or self._num_workers < self._max_procs:
 
             self._create_workers(self._max_procs - self._num_workers)
@@ -248,6 +250,7 @@ class VeriNet:
             if status == Status.Safe or status == Status.Unsafe:
                 return status
         else:
+            self._all_children_done.wait()
             self._put_branch(Branch(0, None, []))
 
         # Calculated values retain the computational graph making the model unpickable, thus failing multiprocessing.
@@ -259,7 +262,6 @@ class VeriNet:
         p = pickle.dumps(objective)
         self.objective = p
 
-        self._all_children_done.wait()
         self._all_children_done.clear()
 
         self._set_activate_master_worker_flags()
@@ -313,6 +315,7 @@ class VeriNet:
                 status = Status.Unsafe
 
         if status == Status.Undecided:
+            self._all_children_done.wait()
             status = solver.verify(Branch(0, None, []), finished_flag=None, needs_branches=None,
                                    put_queue=self._put_branch, queue_depth=0, no_split=True)
 
@@ -466,6 +469,7 @@ class VeriNet:
             if worker.exitcode is None:
                 logger.warning(f"Main process could not join with worker, terminating instead")
                 worker.terminate()
+            self._active_workers.value -= 1
 
         self._workers = None
         self._activate_slave_workers.clear()

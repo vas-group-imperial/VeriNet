@@ -1,5 +1,5 @@
 """
-Unittests for the VeriNetNN and BiasFieldNN classes
+Unittests for the VeriNetNN classes
 
 Author: Patrick Henriksen <patrick@henriksen.as>
 """
@@ -14,7 +14,6 @@ import logging
 from verinet.util.config import CONFIG
 CONFIG.LOGS_LEVEL = logging.ERROR
 
-from verinet.neural_networks.bias_field_nn import BiasFieldNN
 from verinet.tests.simple_nn import SimpleNN, SimpleNNConv2d, SimpleNNBatchNorm2d, SimpleNNAvgPool2d, SimpleNNMean, \
     SimpleNNReshape, SimpleNNMulConstant, SimpleAddDynamic, SimpleDeepResidual
 
@@ -205,51 +204,3 @@ class TestVeriNetNN(unittest.TestCase):
         res = model(x)[0][0, 0, 0]
 
         self.assertAlmostEqual(float(res[0]), float(gt[0]))
-
-
-# noinspection PyCallingNonCallable
-class TestBiasFieldNN(unittest.TestCase):
-
-    def setUp(self):
-
-        self.simpleDeepResidual = SimpleDeepResidual()
-        self.simpleDeepResidual.eval()
-
-        self.x = torch.Tensor([[[[1, 0, 0], [0, 1, 0], [0, 0, 1]]]])
-        self.mean = torch.Tensor([0.5])
-        self.std = torch.Tensor([0.5])
-
-        self.x_norm = (self.x - self.mean.reshape(1, -1, 1, 1)) / self.std.reshape(1, -1, 1, 1)
-
-        bias_field = torch.zeros((9, 2), dtype=torch.float)
-        bias_field[:, 0] = self.x.flatten()
-        bias_field[:, 1] = 1
-
-        self.affine = BiasFieldNN(self.simpleDeepResidual, self.x, bias_field,
-                                  add_x=False, mean=self.mean, std=self.std)
-        self.affine.eval()
-
-    def testIdentityAffine(self):
-
-        """
-        Test that the identity affine transformation in the BiasFieldNN produces the
-        same results as VeriNetNN.
-        """
-
-        res1 = self.simpleDeepResidual(self.x_norm)
-        res2 = self.affine(torch.Tensor([[1, 0]]))
-
-        self.assertAlmostEqual(res1, res2)
-
-    def testAffine(self):
-
-        """
-        Test that the 0.5x + 0.5 affine transformation in the BiasFieldNN produces the
-        same results as VeriNetNN produces with the transformed x.
-        """
-
-        affine_x = (0.5*self.x + 0.5 - self.mean.view(1, 1, -1, 1)) / self.std.view(1, 1, -1, 1)
-        res1 = self.simpleDeepResidual(affine_x)
-        res2 = self.affine(torch.Tensor([[0.5, 0.5]]))
-
-        self.assertAlmostEqual(res1, res2)

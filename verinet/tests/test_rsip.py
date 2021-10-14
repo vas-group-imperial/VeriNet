@@ -177,52 +177,6 @@ class TestRSIP(unittest.TestCase):
         for i in range(len(gt)):
             self.assertEqual(indices[i], gt[i])
 
-    def test_backprop_backprop_through_relaxation(self):
-
-        """
-        Tests the _backprop_through_relaxation method.
-        """
-
-        bounds_symbolic_post = torch.FloatTensor([[1, 2, 1],
-                                                  [-1, -2, 0]])
-
-        self.bounds_relu.nodes[2].bounds_concrete_pre = [torch.FloatTensor([[0, 10], [-10, 10]])]
-        relaxations = torch.FloatTensor([[[0.2, 0], [0.1, 0]],
-                                         [[2, 2], [0.5, 1]]])
-
-        res, _, _, _ = self.bounds_relu._backprop_through_relaxation(bounds_symbolic_post=bounds_symbolic_post,
-                                                                     relaxations=relaxations,
-                                                                     node_num=2,
-                                                                     lower=True)
-        gt = torch.FloatTensor([[0.2, 0.2, 1], [-2, -1, -4]])
-
-        for i in range(gt.shape[0]):
-            for j in range(gt.shape[1]):
-                self.assertEqual(float(res[0][i, j]), float(gt[i, j]))
-
-    def test_backprop_backprop_through_relaxation_relu(self):
-
-        """
-        Tests the _backprop_through_relaxation_relu method.
-        """
-
-        bounds_symbolic_post = torch.FloatTensor([[1, 2, 1],
-                                                  [-1, -2, 0]])
-
-        self.bounds_relu.nodes[2].bounds_concrete_pre = [torch.FloatTensor([[0, 10], [-10, 10]])]
-        relaxations = torch.FloatTensor([[[0.2, 0], [0.1, 0]],
-                                         [[2, 2], [0.5, 1]]])
-
-        res, _, _, _ = self.bounds_relu._backprop_through_relaxation_relu(bounds_symbolic_post=bounds_symbolic_post,
-                                                                          relaxations=relaxations,
-                                                                          node_num=2,
-                                                                          lower=True)
-        gt = torch.FloatTensor([[1, 0.2, 1], [-1, -1, -2]])
-
-        for i in range(gt.shape[0]):
-            for j in range(gt.shape[1]):
-                self.assertEqual(float(res[0][i, j]), float(gt[i, j]))
-
     def test_backprop_symb_equations_post_linear(self):
 
         """
@@ -413,12 +367,11 @@ class TestRSIP(unittest.TestCase):
         """
 
         self.bounds_relu_2_outputs.nodes[3].biases = {2: torch.FloatTensor([[1, 2], [3, 0]])}
-        self.bounds_relu_2_outputs.nodes[3].biases_unused = {2: torch.FloatTensor([[0, 0], [0, 4]])}
+        self.bounds_relu_2_outputs.nodes[3].relax_diff = {2: torch.FloatTensor([[1, 2], [3, 4]])}
         self.bounds_relu_2_outputs.nodes[3].biases_sum = {2: torch.FloatTensor([3, 3])}
 
         output_equations = torch.FloatTensor([[2, 4, 6], [-1, -2, -3]])
         res = self.bounds_relu_2_outputs.separate_bias(3, output_equations)
-
         gt = torch.FloatTensor([[2., 4., 1., 2., 3.],
                                 [-1., -2., 3., 4., -6.]])
 
