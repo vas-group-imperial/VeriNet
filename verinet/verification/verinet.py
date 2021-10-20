@@ -7,6 +7,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 import resource
 
 import os
+import subprocess
 import signal
 import pickle
 import time
@@ -778,8 +779,10 @@ class VeriNet:
         if os.getpid() == self._main_pid:
 
             if self._workers is not None:
+                own_multiprocessing_pids = self._get_own_multiprocessing_pids()
                 self._join_workers()
-                self._cleanup_multiprocessing_resource_trackers()
+                self._cleanup_multiprocessing_resource_trackers(
+                    own_multiprocessing_pids)
 
             if self._branch_queue is not None:
                 self._branch_queue = None
@@ -787,8 +790,38 @@ class VeriNet:
         self._workers = None
 
     @staticmethod
-    def _cleanup_multiprocessing_resource_trackers():
+    def _get_own_multiprocessing_pids():
+        """
+        Determines which processes are children of the current VeriNet instance.
 
+        This is necessary to ensure we do not kill any multiprocessing instances
+        of other VeriNet instances that are run in parallel.
+        Must be called before waiting for children to join, otherwise we cannot
+        detect who their parent was.
+        """
+        if CONFIG.CHILDPROC_TYPE == "spawn":
+            pattern = "multiprocessing.spawn"
+        elif CONFIG.CHILDPROC_TYPE == "forkserver":
+            pattern = "multiprocessing.forkserver"
+        else:
+            return set()
+
+        subprocesses = subprocess.check_output(
+            f'ps -s $$ -o pid=,ppid= -p $(pgrep -f "{pattern}")',
+            shell=True, text=True).strip()
+        children_pids = set()
+        found_match = True
+        while found_match:
+            found_match = False
+            for pid, ppid in [id_pair.split() for id_pair
+                              in subprocesses.split("\n")]:
+                if (int(ppid) == os.getpid() or int(ppid) in children_pids) and int(pid) not in children_pids:
+                    children_pids.add(int(pid))
+                    found_match = True
+        return children_pids
+
+    @staticmethod
+    def _cleanup_multiprocessing_resource_trackers(pids):
         """
         Force terminates resource tracker processes.
 
@@ -804,7 +837,5 @@ class VeriNet:
         freed until reboot.
         """
 
-        if CONFIG.CHILDPROC_TYPE == "spawn":
-            os.system('kill -9 $(pgrep -f "multiprocessing.spawn")')
-        elif CONFIG.CHILDPROC_TYPE == "forkserver":
-            os.system('kill -9 $(pgrep -f "multiprocessing.forkserver")')
+        for pid in pids:
+            os.system("kill -9 %d 2> /dev/null" % pid)
