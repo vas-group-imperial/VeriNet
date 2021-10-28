@@ -116,8 +116,12 @@ class SSIP(SIP):
         bounds_concrete_in = torch.cat((bounds_concrete_in.unsqueeze(0), bounds_concrete_in.unsqueeze(0)), dim=0)
         bounds_concrete_in = self._adjust_bounds_from_forced([bounds_concrete_in], self.nodes[0].forced_bounds_pre)
 
-        self.nodes[0].bounds_concrete_pre = bounds_concrete_in
-        self.nodes[0].bounds_concrete_post = bounds_concrete_in[0]
+        if self._tensor_type == torch.FloatTensor:
+            self.nodes[0].bounds_concrete_pre = [bound.float() for bound in bounds_concrete_in]
+            self.nodes[0].bounds_concrete_post = bounds_concrete_in[0].float()
+        else:
+            self.nodes[0].bounds_concrete_pre = [bound.double() for bound in bounds_concrete_in]
+            self.nodes[0].bounds_concrete_post = bounds_concrete_in[0].double()
 
         from_node = 1 if (from_node is None or from_node < 1) else from_node
         to_node = self.num_nodes if (to_node is None or to_node > self.num_nodes) else to_node

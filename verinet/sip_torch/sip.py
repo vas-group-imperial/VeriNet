@@ -288,8 +288,12 @@ class SIP:
 
             attr = getattr(verinet_nn_node.op, param)
 
-            if isinstance(attr, torch.FloatTensor) and self._tensor_type == torch.DoubleTensor:
+            if (isinstance(attr, torch.FloatTensor) or isinstance(attr, torch.cuda.FloatTensor)) and \
+                    self._tensor_type == torch.DoubleTensor:
                 op.params[param] = attr.double()
+            elif (isinstance(attr, torch.DoubleTensor) or isinstance(attr, torch.cuda.DoubleTensor)) and \
+                    self._tensor_type == torch.FloatTensor:
+                op.params[param] = attr.float()
             else:
                 op.params[param] = attr
 

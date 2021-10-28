@@ -213,9 +213,9 @@ class RSIP(SIP):
 
         bounds_concrete_in = bounds_concrete_in.clone().to(device=self._device)
 
-        if isinstance(bounds_concrete_in, torch.FloatTensor) and self._tensor_type == torch.DoubleTensor:
+        if self._tensor_type == torch.DoubleTensor:
             bounds_concrete_in = bounds_concrete_in.double()
-        elif isinstance(bounds_concrete_in, torch.DoubleTensor) and self._tensor_type == torch.FloatTensor:
+        elif self._tensor_type == torch.FloatTensor:
             bounds_concrete_in = bounds_concrete_in.float()
 
         bounds_concrete_in = self._adjust_bounds_from_forced([bounds_concrete_in], self.nodes[0].forced_bounds_pre)

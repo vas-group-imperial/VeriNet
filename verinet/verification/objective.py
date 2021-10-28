@@ -39,6 +39,7 @@ class Objective:
         """
 
         self.model = model
+        self.model.set_device(False)
 
         self._constraints = []
         self._torch_constraints_eq = []
@@ -173,7 +174,7 @@ class Objective:
         self._constraints += constraints
 
         first, last = self._first_var_id, self._last_var_id
-        self._torch_constraints_eq += [self._tensor_type(constr.as_arrays(first, last))
+        self._torch_constraints_eq += [self._tensor_type(np.array(constr.as_arrays(first, last)))
                                        for constr in constraints]
 
     def remove_constraints(self, constraints: List[CLPConstraint]) -> List[bool]:
