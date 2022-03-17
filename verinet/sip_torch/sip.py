@@ -9,9 +9,13 @@ from typing import Optional
 import torch
 import torch.nn as nn
 
-from .operations.abstract_operation import AbstractOperation
-from ..neural_networks.verinet_nn import VeriNetNN
-from ..util.config import CONFIG
+from verinet.sip_torch.operations.abstract_operation import AbstractOperation
+from verinet.sip_torch.operations.linear import Identity
+from verinet.neural_networks.verinet_nn import VeriNetNN
+from verinet.util.config import CONFIG
+from verinet.util.logger import get_logger
+
+logger = get_logger(CONFIG.LOGS_LEVEL_VERIFIER, __name__, "../../logs/", "sip_log")
 
 
 class SIP:
@@ -263,7 +267,35 @@ class SIP:
         for node in torch_model.nodes:
             self._nodes.append(self._process_node(node))
 
-    # noinspection PyTypeChecker
+        self.nodes_sanity_check(self._nodes)
+
+    @staticmethod
+    def nodes_sanity_check(nodes):
+
+        """
+        Performs a simple sanity check on the network architecture.
+
+        Args:
+            nodes:
+                The nodes in the network.
+        """
+
+        num_input_nodes = len([node for node in nodes if node.connections_from == []])
+        num_output_nodes = len([node for node in nodes if node.connections_to == []])
+
+        if num_input_nodes != 1:
+            raise ValueError(f"VeriNet only supports networks with a single input layer (with connections_from = [])"
+                             f"Got {num_input_nodes}")
+
+        if num_output_nodes != 1:
+            raise ValueError(f"VeriNet only supports networks with a single output layer (with connections_to = [])"
+                             f"Got {num_output_nodes}")
+
+        # if not isinstance(nodes[0].op, Identity) or not isinstance(nodes[-1].op, Identity):
+        #     logger.warning("Expected a nn.Identity layer at the start and end of the network, behaviour without "
+        #                    "may be undefined.")
+
+    # noinspection PyTypeChecker,PyUnresolvedReferences
     def _process_node(self, verinet_nn_node: torch.nn):
 
         """
@@ -626,7 +658,7 @@ class SIPNode:
             bounds_concrete_pre:
                 The concrete pre-operation value.
         Returns:
-            A boolean tensor with 'true' for non linear neurons and false otherwise.
+            A boolean tensor with 'true' for non-linear neurons and false otherwise.
         """
 
         return self.op.get_non_linear_neurons(bounds_concrete_pre)
@@ -666,9 +698,6 @@ class SIPNode:
         return self.op.backprop_through_relaxation(bounds_symbolic_post, self.bounds_concrete_pre[0], relaxations,
                                                    lower, get_relax_diff)
 
-    def copy(self):
-        return self.__copy__()
-
     def __call__(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
         return self.forward(x, add_bias)
 
@@ -679,6 +708,3 @@ class SIPNode:
 
     def __repr__(self):
         return self.__str__()
-
-    def __copy__(self):
-        return VeriNetNNNode(self.idx, self.op, self.connections_from.copy(), self.connections_to.copy())

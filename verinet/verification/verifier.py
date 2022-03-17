@@ -9,23 +9,21 @@ import os
 import time
 from typing import Callable, Optional
 from collections import deque
-import psutil
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.multiprocessing as mp
 import numpy as np
-import warnings
 from tqdm import tqdm
 
-from .objective import Objective
-from .lp_solver import LPSolver, LPSolverException
-from .verifier_util import Status, Branch
-from ..sip_torch.ssip import SSIP
-from ..sip_torch.rsip import RSIP
-from ..util.logger import get_logger
-from ..util.config import CONFIG
+from verinet.verification.objective import Objective
+from verinet.verification.lp_solver import LPSolver, LPSolverException
+from verinet.verification.verifier_util import Status, Branch
+from verinet.sip_torch.ssip import SSIP
+from verinet.sip_torch.rsip import RSIP
+from verinet.util.logger import get_logger
+from verinet.util.config import CONFIG
 
 logger = get_logger(CONFIG.LOGS_LEVEL_VERIFIER, __name__, "../../logs/", "verifier_log")
 
@@ -541,7 +539,7 @@ class Verifier:
         split_forced = [bounds if bounds is not None else None for bounds in self._rsip.get_forced_bounds_pre(True)]
 
         if len(split_forced[node]) != 1:
-            raise ValueError(f"Expected one set of forced bounds for split node, got {en(split_forced[node])}")
+            raise ValueError(f"Expected one set of forced bounds for split node, got {len(split_forced[node])}")
 
         if not upper:
             old_forced = split_forced[node][0][neuron, 1]

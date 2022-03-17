@@ -12,7 +12,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 
 import numpy as np
 
-from .lin_eq import LinEq
+from verinet.constraints.lin_eq import LinEq
 
 
 class CLPConstraint:
@@ -39,7 +39,7 @@ class CLPConstraint:
         """
         Args:
             lin_eq:
-                The left hand side of the constraint (rhs. is taken to be 0).
+                The left-hand side of the constraint (rhs. is taken to be 0).
             name:
                 The name of the constraint.
         """

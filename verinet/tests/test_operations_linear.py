@@ -10,7 +10,6 @@ import logging
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as tf
 
 from verinet.util.config import CONFIG
 CONFIG.LOGS_LEVEL = logging.ERROR
@@ -23,7 +22,6 @@ from verinet.neural_networks.custom_layers import Crop as TorchCrop
 from verinet.neural_networks.custom_layers import MulConstant as TorchMulConstant
 from verinet.neural_networks.custom_layers import AddDynamic as TorchAddDynamic
 from verinet.neural_networks.custom_layers import Transpose as TorchTranspose
-from verinet.neural_networks.custom_layers import AddConstant as TorchAddConstant
 
 
 # noinspection PyCallingNonCallable,PyTypeChecker
@@ -196,7 +194,7 @@ class TestOperationsLinear(unittest.TestCase):
     def test_flatten_ssip_forward(self):
 
         """
-        Tests the ssip_foward method
+        Tests the ssip_forward method
         """
 
         x = torch.FloatTensor([[[-1, -2, -3]]])

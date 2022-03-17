@@ -1,14 +1,11 @@
 """
-Unittests for the SIP classe
+Unittests for the SIP class
 
 Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
-import os
 import torch
-import numpy as np
 import unittest
-import warnings
 import logging
 
 from verinet.util.config import CONFIG

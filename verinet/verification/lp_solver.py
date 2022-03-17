@@ -170,7 +170,7 @@ class LPSolver:
     def add_constraints(self, coeffs: np.array, constants: np.array, constr_types: list) -> xp.constraint:
 
         """
-        Adds a LP-constraint to the solver.
+        Adds an LP-constraint to the solver.
 
         Adds constraints with respect to self.variables. The variables are
         multiplied by the provided coeffs and the constant is added.
@@ -230,7 +230,8 @@ class LPSolver:
             constraints: The key of the constraint.
         """
 
-        self._solver.delConstraint(constraints)
+        if len(constraints) > 0:
+            self._solver.delConstraint(constraints)
 
     def remove_all_constraints(self):
 
@@ -238,7 +239,8 @@ class LPSolver:
         Removes all constraint from solver.
         """
 
-        self._solver.delConstraint(self._solver.getConstraint())
+        if len(self._solver.getConstraint()) > 0:
+            self._solver.delConstraint(self._solver.getConstraint())
 
     def maximise_objective(self, coeffs: np.array, constant: np.array):
 

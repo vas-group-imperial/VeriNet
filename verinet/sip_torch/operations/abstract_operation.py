@@ -12,7 +12,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 
 import torch
 
-from ...util.config import CONFIG
+from verinet.util.config import CONFIG
 
 
 class AbstractOperation:
@@ -148,13 +148,13 @@ class AbstractOperation:
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -167,7 +167,7 @@ class AbstractOperation:
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower bounding equations of ssip.
+        Propagates the upper and lower bounding equations of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -314,7 +314,7 @@ class AbstractOperation:
             bounds_concrete_pre:
                 The concrete pre-operation value.
         Returns:
-            A boolean tensor with 'true' for non linear neurons and false otherwise.
+            A boolean tensor with 'true' for non-linear neurons and false otherwise.
         """
 
         if self.is_linear:

@@ -4,10 +4,7 @@ This file contains the main class for verification.
 Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
-import resource
-
 import os
-import signal
 import pickle
 import time
 import psutil
@@ -22,11 +19,11 @@ from multiprocessing.managers import BaseManager
 
 import numpy as np
 
-from .verifier import Verifier
-from .verifier_util import Status, Branch
-from .objective import Objective
-from ..util.logger import get_logger
-from ..util.config import CONFIG
+from verinet.verification.verifier import Verifier
+from verinet.verification.verifier_util import Status, Branch
+from verinet.verification.objective import Objective
+from verinet.util.logger import get_logger
+from verinet.util.config import CONFIG
 
 logger = get_logger(CONFIG.LOGS_LEVEL_VERINET, __name__, "../../logs/", "verinet_log")
 
@@ -218,6 +215,7 @@ class VeriNet:
         if self._workers is None or self._num_workers < self._max_procs:
 
             self._create_workers(self._max_procs - self._num_workers)
+            # noinspection PyUnresolvedReferences
             self._master_worker_pid.value = self._workers[0].pid
 
         for i in range(self._active_workers.value):
@@ -437,8 +435,6 @@ class VeriNet:
         reached.
 
         Args:
-            start_time:
-                The timestamp from when solving started
             timeout:
                 The timeout parameter
         Returns:
@@ -672,7 +668,7 @@ class VeriNet:
     def _handle_memory(self):
 
         """
-        This function kills all workers if memory usage is to large.
+        This function kills all workers if memory usage is too large.
 
         VeriNet has a small memory leak, leading to increased memory usage over time.
         This can become significant if when verifying a large amount of problems for
@@ -681,9 +677,9 @@ class VeriNet:
 
         A lot of work has gone into locating the memory leak; however, the tracemalloc
         module indicates that there is no significant leak. Since tracemalloc doesn't
-        locates the leak, it most likely happens in the c-backend of one or more
+        locate the leak, it most likely happens in the c-backend of one or more
         libraries (numpy, numba, multiprocessing, Xpress...). So, this was the
-        second best solution and creates only minimal overhead.
+        second-best solution and creates only minimal overhead.
         """
 
         logger.debug(f"Memory usage: {psutil.virtual_memory()[2]}")

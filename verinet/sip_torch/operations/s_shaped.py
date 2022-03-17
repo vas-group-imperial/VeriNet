@@ -9,7 +9,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 import torch
 import torch.nn as nn
 
-from .abstract_operation import AbstractOperation
+from verinet.sip_torch.operations.abstract_operation import AbstractOperation
 
 
 def atleast_1d(x: torch.Tensor):
@@ -79,13 +79,13 @@ class AbstractSShaped(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -98,7 +98,7 @@ class AbstractSShaped(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower bounding equations of ssip.
+        Propagates the upper and lower bounding equations of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -362,7 +362,7 @@ class AbstractSShaped(AbstractOperation):
             xu:
                 The array with upper bounds for each neuron_num.
             upper:
-                If true a upper bound is calculated, else a lower bound is calculated.
+                If true an upper bound is calculated, else a lower bound is calculated.
 
         Returns:
             An array where the first column is a and the second column is b, the
@@ -447,13 +447,13 @@ class Sigmoid(AbstractSShaped):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding neuron_num. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -466,7 +466,7 @@ class Sigmoid(AbstractSShaped):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower bounding equations of ssip.
+        Propagates the upper and lower bounding equations of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -615,13 +615,13 @@ class Tanh(AbstractSShaped):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding neuron_num. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -652,7 +652,7 @@ class Tanh(AbstractSShaped):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower bounding equations of ssip.
+        Propagates the upper and lower bounding equations of ssip.
 
         Args:
             bounds_symbolic_pre:

@@ -6,9 +6,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
 import torch
-import numpy as np
 import unittest
-import warnings
 import logging
 
 from verinet.util.config import CONFIG

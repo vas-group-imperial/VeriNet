@@ -6,7 +6,6 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
 
-from typing import Callable
 from copy import deepcopy
 
 import torch
@@ -118,7 +117,7 @@ class VeriNetNN(nn.Module):
 
         Args:
             node_num:
-                The number of the the current node.
+                The number of the current node.
         """
 
         for node in self.nodes:
@@ -156,7 +155,7 @@ class VeriNetNN(nn.Module):
     def load_onnx(path: str):
 
         """
-        Loads a onnx _model.
+        Loads an onnx _model.
 
         Args:
             path: The path of the onnx _model.
@@ -164,7 +163,7 @@ class VeriNetNN(nn.Module):
             The VeriNetNN object
         """
 
-        from ..parsers.onnx_parser import ONNXParser
+        from verinet.parsers.onnx_parser import ONNXParser
 
         parser = ONNXParser(path)
         return parser.to_pytorch()

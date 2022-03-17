@@ -11,15 +11,15 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as functional
 
-from .abstract_operation import AbstractOperation
-from ...neural_networks.custom_layers import Reshape as ReshapeTorch
-from ...neural_networks.custom_layers import Mean as MeanTorch
-from ...neural_networks.custom_layers import Crop as CropTorch
-from ...neural_networks.custom_layers import MulConstant as MulConstantTorch
-from ...neural_networks.custom_layers import AddDynamic as AddDynamicTorch
-from ...neural_networks.custom_layers import Transpose as TransposeTorch
-from ...neural_networks.custom_layers import AddConstant as AddConstantTorch
-from ...neural_networks.custom_layers import Unsqueeze as UnsqueezeTorch
+from verinet.sip_torch.operations.abstract_operation import AbstractOperation
+from verinet.neural_networks.custom_layers import Reshape as ReshapeTorch
+from verinet.neural_networks.custom_layers import Mean as MeanTorch
+from verinet.neural_networks.custom_layers import Crop as CropTorch
+from verinet.neural_networks.custom_layers import MulConstant as MulConstantTorch
+from verinet.neural_networks.custom_layers import AddDynamic as AddDynamicTorch
+from verinet.neural_networks.custom_layers import Transpose as TransposeTorch
+from verinet.neural_networks.custom_layers import AddConstant as AddConstantTorch
+from verinet.neural_networks.custom_layers import Unsqueeze as UnsqueezeTorch
 
 
 class Identity(AbstractOperation):
@@ -50,13 +50,13 @@ class Identity(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -69,7 +69,7 @@ class Identity(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -144,13 +144,13 @@ class Reshape(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -163,7 +163,7 @@ class Reshape(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -248,13 +248,13 @@ class Transpose(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a list of NxM tensors where each row is a symbolic bounds
                 for the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -277,7 +277,7 @@ class Transpose(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -386,13 +386,13 @@ class Flatten(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -405,7 +405,7 @@ class Flatten(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -489,13 +489,13 @@ class FC(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True, calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
             calc_nodes:
@@ -522,7 +522,7 @@ class FC(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -653,13 +653,13 @@ class Conv2d(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -692,7 +692,7 @@ class Conv2d(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -858,13 +858,13 @@ class AvgPool2d(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -877,7 +877,7 @@ class AvgPool2d(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1019,13 +1019,13 @@ class Mean(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1038,7 +1038,7 @@ class Mean(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1186,13 +1186,13 @@ class MulConstant(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1207,7 +1207,7 @@ class MulConstant(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1324,13 +1324,13 @@ class AddConstant(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1345,7 +1345,7 @@ class AddConstant(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1437,13 +1437,13 @@ class AddDynamic(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1456,7 +1456,7 @@ class AddDynamic(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1534,13 +1534,13 @@ class Crop(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1560,7 +1560,7 @@ class Crop(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -1667,13 +1667,13 @@ class Unsqueeze(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True) -> torch.Tensor:
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -1686,7 +1686,7 @@ class Unsqueeze(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower symbolic bounds of ssip.
+        Propagates the upper and lower symbolic bounds of ssip.
 
         Args:
             bounds_symbolic_pre:

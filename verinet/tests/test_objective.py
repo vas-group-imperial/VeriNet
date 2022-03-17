@@ -43,7 +43,7 @@ class TestLPSolver(unittest.TestCase):
     def test_init(self):
 
         """
-        Tests that some of the variables in init are initialised correctly.
+        Tests that some variables in init are initialised correctly.
         """
 
         self.assertEqual(len(self._objective.input_shape), 3)
@@ -58,7 +58,7 @@ class TestLPSolver(unittest.TestCase):
     def test_add_constraints(self):
 
         """
-        Tests that two constraints are added correctly with the add_contriants() method
+        Tests that two constraints are added correctly with the add_constraints() method
         """
 
         y = self._objective.output_vars
@@ -74,7 +74,7 @@ class TestLPSolver(unittest.TestCase):
     def test_remove_constraints(self):
 
         """
-        Tests that two constraints are added correctly with the add_contriants() method
+        Tests that two constraints are added correctly with the add_constraints() method
         """
 
         y = self._objective.output_vars
@@ -92,7 +92,7 @@ class TestLPSolver(unittest.TestCase):
     def test_grad_descent_losses(self):
 
         """
-        Tests that two constraints are added correctly with the add_contriants() method
+        Tests that two constraints are added correctly with the add_constraints() method
         """
 
         y = self._objective.output_vars

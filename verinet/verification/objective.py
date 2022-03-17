@@ -5,20 +5,20 @@ A class representing the verification objective.
 Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
-from typing import List, Callable, Optional
+from typing import List
 
 import numpy as np
 import torch
 
-from ..neural_networks.verinet_nn import VeriNetNN
-from ..sip_torch.sip import SIP
+from verinet.neural_networks.verinet_nn import VeriNetNN
+from verinet.sip_torch.sip import SIP
 
-from ..verification.verifier_util import Status
-from ..constraints.var import Var
-from ..constraints.clp_constraint import CLPConstraint
-from ..util.config import CONFIG
-from .verifier_util import Branch
-from .lp_solver import LPSolver
+from verinet.verification.verifier_util import Status
+from verinet.constraints.var import Var
+from verinet.constraints.clp_constraint import CLPConstraint
+from verinet.util.config import CONFIG
+from verinet.verification.verifier_util import Branch
+from verinet.verification.lp_solver import LPSolver
 
 
 class Objective:
@@ -288,7 +288,7 @@ class Objective:
             sip:
                 The SIP object with calculated bounds.
         Returns:
-            A tuple bool, potential_cex, value where the bool = True indicates that all
+            A tuple bool, potential_cex, value where the bool = True indicates that
             all constraints have been checked while potential_cex is a vector that
             satisfies all constraints if found, otherwise None. Value is the
             value the constraint evaluated at potential_cex. Note that if
@@ -337,7 +337,7 @@ class Objective:
                 The SIP object
             use_optimised_relaxation_constraints:
                 If true, a second run is performed with relaxations optimised
-                for the model-values computed by spurious cexs.
+                for the model-values computed by spurious counter examples.
         Returns:
             The potential cex and corresponding value of the upper bound. 
         """
@@ -474,7 +474,7 @@ class Objective:
                 The SIP object
             use_optimised_relaxation_constraints:
                 If true, a second run is performed with relaxations optimised
-                for the model-values computed by spurious cexs.
+                for the model-values computed by spurious counter examples.
         Returns:
             (potential_cex, max_val), if no potential_cex was found None is returned
             instead.

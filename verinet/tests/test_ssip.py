@@ -6,9 +6,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
 import torch
-import numpy as np
 import unittest
-import warnings
 import logging
 
 from verinet.util.config import CONFIG
@@ -150,7 +148,7 @@ class TestSSIP(unittest.TestCase):
     def test_get_pre_concrete_from_symbolic_lazy(self):
 
         """
-        Tests the get_pre_concrete method with symnbolic equations using the lazy
+        Tests the get_pre_concrete method with symbolic equations using the lazy
         calculations.
         """
 

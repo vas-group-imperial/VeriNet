@@ -6,7 +6,6 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 
 import os
 import torch
-import numpy as np
 import unittest
 import warnings
 import logging
@@ -198,7 +197,7 @@ class TestONNXParser(unittest.TestCase):
     def testReshape(self):
 
         """
-        Test saving and loading a simple 2-node networks with the Reshape op.
+        Test saving and loading a simple 2-node networks with the Reshape-op.
         """
 
         dummy_tensor = torch.Tensor([[1, 0, 0, 0, 1, 0, 0, 0, 1]])
@@ -218,7 +217,7 @@ class TestONNXParser(unittest.TestCase):
     def testMulConstant(self):
 
         """
-        Test saving and loading a simple 2-node networks with the Reshape op.
+        Test saving and loading a simple 2-node networks with the Reshape-op.
         """
 
         dummy_tensor = torch.Tensor([[[[1, 0, 0], [0, 1, 0], [0, 0, 1]]]])

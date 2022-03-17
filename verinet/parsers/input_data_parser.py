@@ -13,11 +13,11 @@ import numpy as np
 def load_img(path: str, img_nums: list, shape: tuple) -> np.array:
 
     """
-    Loads a image in the human-readable format.
+    Loads an image in the human-readable format.
 
     Args:
         path:
-            The path to the to the folder with mnist images.
+            The path to the folder with mnist images.
         img_nums:
             A list with the numbers of the images we want to load.
         shape:
@@ -45,7 +45,7 @@ def load_mnist_human_readable(path: str, img_nums: list) -> np.array:
 
     Args:
         path:
-            The path to the to the folder with mnist images.
+            The path to the folder with mnist images.
         img_nums:
             A list with the numbers of the images we want to load.
 
@@ -59,11 +59,11 @@ def load_mnist_human_readable(path: str, img_nums: list) -> np.array:
 def load_cifar10_human_readable(path: str, img_nums: list) -> np.array:
 
     """
-    Loads the Cifar10 images in human readable format.
+    Loads the Cifar10 images in human-readable format.
 
     Args:
         path:
-            The path to the to the folder with mnist images.
+            The path to the folder with mnist images.
         img_nums:
             A list with the numbers of the images we want to load.
 
@@ -96,4 +96,3 @@ def load_images_eran(img_csv: str = "../../resources/images/cifar10_test.csv", n
             images_array[j] = [float(pixel) for pixel in line_arr[1:]]
 
     return images_array.reshape((num_images, *image_shape)), targets_array
-

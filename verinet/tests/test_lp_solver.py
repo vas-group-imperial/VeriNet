@@ -26,13 +26,14 @@ class TestLPSolver(unittest.TestCase):
 
         - sys:1: DeprecationWarning: PyArray_GetNumericOps is deprecated.
         - sys:1: DeprecationWarning: PyArray_SetNumericOps is deprecated. Use
-          PyUFunc_ReplaceLoopBySignature to replace ufunc inner loop functions instead.
+          PyUFunc_ReplaceLoopBySignature to replace ufunc inner loop functions
+          instead.
 
         The warnings seem to be triggered when importing LPSolver; however, this
-        behaviour is not observed during normal usage. The methods in question seem to
-        be numpy-methods and might be related to the Xpress-numpy interface.
-        Since the warnings are only triggered during unittests, we filter
-        them out.
+        behaviour is not observed during normal usage. The methods in question
+        seem to be numpy-methods and might be related to the Xpress-numpy
+        interface. Since the warnings are only triggered during unittests, we
+        filter them out.
         """
 
         warnings.filterwarnings("ignore", category=DeprecationWarning)
@@ -116,13 +117,13 @@ class TestLPSolver(unittest.TestCase):
         constraints = self._lp_solver.add_constraints(coeffs=np.array([[1, 2], [2, 3]]), constants=np.array([1, 2]),
                                                       constr_types=['L', 'G'])
 
-        self._lp_solver.remove_constraints(constraints[0])
+        self._lp_solver.remove_constraints([constraints[0]])
         self.assertEqual(constraints[1], self._lp_solver._solver.getConstraint()[0])
 
     def test_solve(self):
 
         """
-        Checks that the solve() method returns feasible/ infeasible correctly for two
+        Checks that the solve-method returns feasible/ infeasible correctly for two
         simple test-cases.
         """
 

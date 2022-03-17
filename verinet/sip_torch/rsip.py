@@ -14,14 +14,9 @@ import torch
 import numpy as np
 from tqdm import tqdm
 
-from .sip import SIP
-from .ssip import SSIP
-from .operations.abstract_operation import AbstractOperation
-from .operations.piecewise_linear import Relu
-from .operations.s_shaped import AbstractSShaped
-from .operations.linear import FC
-from ..neural_networks.verinet_nn import VeriNetNN
-from ..util.config import CONFIG
+from verinet.sip_torch.sip import SIP
+from verinet.neural_networks.verinet_nn import VeriNetNN
+from verinet.util.config import CONFIG
 
 
 class RSIP(SIP):
@@ -375,7 +370,7 @@ class RSIP(SIP):
                 only performed when necessary.
 
         Returns:
-            A torch tensor with the indices of non linear nodes as well as a tensor of
+            A torch tensor with the indices of non-linear nodes as well as a tensor of
             indices where indices[i] to indices[i+1] of the index list are
             estimated to fit withing the memory as defined by the class parameters.
         """
@@ -506,7 +501,7 @@ class RSIP(SIP):
     def _get_mem_limited_node_indices(self, node_num: int, num_bounds: int):
 
         """
-        Returns a list with the from, to indices that can be calculated at once
+        Returns a list with the from and to indices that can be calculated at once
         while within the memory limit.
 
         Args:
@@ -698,7 +693,7 @@ class RSIP(SIP):
             node_size:
                 The number of neurons in the node
             indices:
-                Indices of the neurons for which to initialize symbolic bounds.
+                Indices of the neurons for which to initialise symbolic bounds.
 
         Returns:
             The lower and upper symbolic bounds
@@ -1048,8 +1043,8 @@ class RSIP(SIP):
                 If true, the returned equation is lower-bounding, otherwise upper
                 bounding.
         Returns:
-            A tuple (impact, indices) where impact contains the sorted list of esimated
-            impacts per neuron and indices contains the corresponding
+            A tuple (impact, indices) where impact contains the sorted list of
+            estimated impacts per neuron and indices contains the corresponding
             [node_num, neuron_num] pairs.
         """
 
@@ -1118,7 +1113,7 @@ class RSIP(SIP):
     def _calc_non_linear_node_direct_impact(self, output_equation: torch.Tensor, lower: bool = True):
 
         """
-        Estimates the impact of the nodes non linear nodes on the output equation
+        Estimates the impact of the nodes non-linear nodes on the output equation
 
         The direct impact is stored in node.intermediate_bounds["impact"]
 
@@ -1157,7 +1152,7 @@ class RSIP(SIP):
     def _calc_non_linear_node_indirect_impact(self):
 
         """
-        Estimates the indirect impact of the non linear nodes on the output equation
+        Estimates the indirect impact of the non-linear nodes on the output equation
 
         It is assumed that the direct impact is already calculated for all nodes. The
         indirect impact is added to node.intermediate_bounds["impact"].

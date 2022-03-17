@@ -8,7 +8,7 @@ dnnv = "*"
 onnxruntime = "*"
 
 [packages]
-numpy = "<1.20"
+numpy = "*"
 scipy = "*"
 setuptools = "*"
 torch = "*"
@@ -17,7 +17,7 @@ pillow = "*"
 psutil = "*"
 onnx = "*"
 tqdm = "*"
-xpress = "==8.11"
+xpress = "*"
 matplotlib = "*"
 netron = "*"
 

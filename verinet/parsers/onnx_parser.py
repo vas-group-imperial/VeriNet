@@ -19,16 +19,18 @@ import torch.nn as nn
 import onnx
 import onnx.numpy_helper
 
-from ..neural_networks.verinet_nn import VeriNetNN, VeriNetNNNode
-from ..neural_networks.custom_layers import Mean, MulConstant, AddDynamic, Reshape, Transpose, AddConstant, Unsqueeze
-from ..util.logger import get_logger
-from ..util.config import CONFIG
+from verinet.neural_networks.verinet_nn import VeriNetNN, VeriNetNNNode
+from verinet.neural_networks.custom_layers import Mean, MulConstant, AddDynamic, Reshape, Transpose, AddConstant, \
+    Unsqueeze
+from verinet.util.logger import get_logger
+from verinet.util.config import CONFIG
 
 logger = get_logger(CONFIG.LOGS_LEVEL, __name__, "../../logs/", "log")
 
 
 class ONNXParser:
 
+    # noinspection PyUnresolvedReferences
     def __init__(self,
                  filepath: str,
                  transpose_fc_weights: bool = False,
@@ -39,7 +41,7 @@ class ONNXParser:
         Args:
             filepath:
                 The path of the onnx file
-            transpose_weights:
+            transpose_fc_weights:
                 If true, weights are transposed for fully-connected layers.
             input_names:
                 The name of the network's input in the onnx _model.
@@ -54,13 +56,13 @@ class ONNXParser:
             op_graph = dnnv.nn.parse(Path(filepath)).simplify()
             self._model = op_graph.as_onnx()
         except ModuleNotFoundError:
-            logger.warning("DNNV pacakge not found, attempting to proceed without network simplification.")
+            logger.warning("DNNV package not found, attempting to proceed without network simplification.")
             self._model = onnx.load(filepath)
         except ImportError:
-            logger.warning("DNNV pacakge not found, attempting to proceed without network simplification.")
+            logger.warning("DNNV package not found, attempting to proceed without network simplification.")
             self._model = onnx.load(filepath)
         except ValueError as e:
-            logger.info(f"DNNV simplifiaction failed with message:\n'{str(e)}'\n"
+            logger.info(f"DNNV simplification failed with message:\n'{str(e)}'\n"
                         f"Attempting to proceed without network simplification.")
             self._model = onnx.load(filepath)
 
@@ -311,7 +313,7 @@ class ONNXParser:
     def _process_node(self, node: onnx.NodeProto, idx_num: int) -> Optional[list]:
 
         """
-        Processes a onnx node converting it to a corresponding torch node.
+        Processes an onnx node converting it to a corresponding torch node.
 
         Args:
             node:
@@ -329,7 +331,7 @@ class ONNXParser:
             return [VeriNetNNNode(idx_num, nn.ReLU(), input_connections)]
 
         elif node.op_type == "PRelu":
-            if len(node.input) !=  2:
+            if len(node.input) != 2:
                 raise ValueError(f"Found more than one input connection to {node}")
             return self.prelu_to_verinet_nn_node(node, idx_num)
 
@@ -414,7 +416,7 @@ class ONNXParser:
         elif node.op_type == "Transpose":
             if len(node.input) != 1:
                 logger.warning(f"Unexpected input length: \n{node}, expected {1}, got {len(node.input)}")
-            return self.tranpose_to_verinet_nn_node(node, idx_num)
+            return self.transpose_to_verinet_nn_node(node, idx_num)
 
         elif node.op_type == "MaxPool":
             if len(node.input) != 1:
@@ -439,7 +441,7 @@ class ONNXParser:
     def prelu_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'gemm' node to a Linear verinet_nn_node.
+        Converts an onnx 'gemm' node to a Linear verinet_nn_node.
 
         Args:
             node:
@@ -465,7 +467,7 @@ class ONNXParser:
     def gemm_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'gemm' node to a Linear verinet_nn_node.
+        Converts an onnx 'gemm' node to a Linear verinet_nn_node.
 
         Args:
             node:
@@ -496,7 +498,7 @@ class ONNXParser:
     def matmul_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'matmul' node to a Linear verinet_nn_node.
+        Converts an onnx 'matmul' node to a Linear verinet_nn_node.
 
         Args:
             node:
@@ -542,7 +544,7 @@ class ONNXParser:
     def conv_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'Conv' node to a Conv verinet_nn_node.
+        Converts an onnx 'Conv' node to a Conv verinet_nn_node.
 
         Args:
             node:
@@ -596,7 +598,7 @@ class ONNXParser:
     def batch_norm_2d_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'BatchNormalization' node to a BatchNorm2d verinet_nn_node.
+        Converts an onnx 'BatchNormalization' node to a BatchNorm2d verinet_nn_node.
 
         Args:
             node:
@@ -635,7 +637,7 @@ class ONNXParser:
     def reduce_mean_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'Reduce Mean' node to a Mean verinet_nn_node.
+        Converts an onnx 'Reduce Mean' node to a Mean verinet_nn_node.
 
         Args:
             node:
@@ -727,7 +729,7 @@ class ONNXParser:
     def mul_to_verinet_nn_node(self, node, idx_num: int) -> Optional[list]:
 
         """
-        Converts a onnx 'Mul' node to a MulConstant verinet_nn_node.
+        Converts an onnx 'Mul' node to a MulConstant verinet_nn_node.
 
         Args:
             node:
@@ -778,7 +780,7 @@ class ONNXParser:
     def div_to_verinet_nn_node(self, node, idx_num: int) -> Optional[list]:
 
         """
-        Converts a onnx 'Div' node to a MulConstant verinet_nn_node.
+        Converts an onnx 'Div' node to a MulConstant verinet_nn_node.
 
         Args:
             node:
@@ -828,11 +830,11 @@ class ONNXParser:
     def reshape_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'Reshape' node to a Reshape verinet_nn_node.
+        Converts an onnx 'Reshape' node to a Reshape-verinet_nn_node.
 
         Args:
             node:
-                The Reshape node.
+                The Reshape-node.
             idx_num:
                 The index of the current node.
         Returns:
@@ -898,7 +900,7 @@ class ONNXParser:
     def add_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'Add' node to a AddDynamic verinet_nn_node.
+        Converts an onnx 'Add' node to a AddDynamic verinet_nn_node.
 
         The input is assumed to be the outputs of two previous layers, this
         method does not handle add operations between one layer-output and one
@@ -924,7 +926,7 @@ class ONNXParser:
     def sub_to_verinet_nn_node(self, node, idx_num: int) -> Optional[list]:
 
         """
-        Converts a onnx 'Sub' node to a AddConstant verinet_nn_node.
+        Converts an onnx 'Sub' node to a AddConstant verinet_nn_node.
 
         The input is assumed to be the output of one previous layers and a constant,
         this method does not handle sub operations between two layers.
@@ -979,10 +981,10 @@ class ONNXParser:
 
         return [VeriNetNNNode(idx_num, AddConstant(-value), input_connections)]
 
-    def tranpose_to_verinet_nn_node(self, node, idx_num: int) -> list:
+    def transpose_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'Transpose' node to a Transpose verinet_nn_node.
+        Converts an onnx 'Transpose' node to a Transpose verinet_nn_node.
 
         Args:
             node:
@@ -990,7 +992,7 @@ class ONNXParser:
             idx_num:
                 The index of the current node.
         Returns:
-            A list containing the verinet_nn_node Tranpose op.
+            A list containing the verinet_nn_node Transpose op.
         """
 
         input_connections = self._get_connections_to(node)
@@ -1009,7 +1011,7 @@ class ONNXParser:
     def maxpool_to_verinet_nn_node(self, node, idx_num: int) -> list:
 
         """
-        Converts a onnx 'MaxPool' node to a a set of convolutional/Relu layers
+        Converts an onnx 'MaxPool' node to a set of convolutional/Relu layers
         equivalent to the maxpool op.
 
         Args:
@@ -1028,7 +1030,7 @@ class ONNXParser:
             try:
                 if self._node_to_idx[other_node.name] in input_connections:
                     if other_node.op_type != "Relu":
-                        raise ValueError("Expected all nodes preceeding MaxPool to be Relu.")
+                        raise ValueError("Expected all nodes preceding MaxPool to be Relu.")
             except KeyError:
                 continue
 
@@ -1142,8 +1144,10 @@ class ONNXParser:
         Changes the indices of all nodes to bypass the given node.
 
         Args:
-            node:
-                The onnx node
+            in_idx:
+                The in-indices of the node to bypass.
+            out_idx:
+                The out-indices of the node to bypass.
         """
 
         for other_node in self._onnx_nodes + self._pad_nodes:

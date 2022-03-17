@@ -9,12 +9,10 @@ from typing import Optional
 
 import torch
 
-from .sip import SIP
-from .operations.abstract_operation import AbstractOperation
-from .operations.piecewise_linear import Relu
-from .operations.linear import FC
-from ..neural_networks.verinet_nn import VeriNetNN
-from ..util.config import CONFIG
+from verinet.sip_torch.sip import SIP
+from verinet.sip_torch.operations.piecewise_linear import Relu
+from verinet.neural_networks.verinet_nn import VeriNetNN
+from verinet.util.config import CONFIG
 
 
 class SSIP(SIP):
@@ -52,9 +50,9 @@ class SSIP(SIP):
         Returns the concrete pre-operations bounds for the given node.
 
         Returns:
-            A list where each element is a Nx2 matrix with the with the lower bound in
-            the first column and upper in the second. Note that nodes with more than
-            one input produce one tensor of bounds for each input.
+            A list where each element is a Nx2 matrix with the lower bound in
+            the first column and upper in the second. Note that nodes with more
+            than one input produce one tensor of bounds for each input.
         """
 
         node_num = self.num_nodes + node_num if node_num < 0 else node_num
@@ -88,7 +86,7 @@ class SSIP(SIP):
         """
 
         node = self.num_nodes + node if node < 0 else node
-        return self._bounds_symbolic_pre[node]
+        return node.bounds_symbolic_pre
 
     # noinspection PyArgumentList,PyTypeChecker
     def calc_bounds(self, bounds_concrete_in: torch.Tensor, from_node: int = None, to_node: int = None) -> bool:
@@ -302,12 +300,12 @@ class SSIP(SIP):
         """
         Clears buffered values that are not used in the rest of the SIP process.
 
-        A nodes symbolic bounds are considered not needed when all of the
+        A nodes symbolic bounds are considered not needed when all the
         following conditions are satisfied:
 
         1) They're not the input node
 
-        2) They're not not needed in the computational graph after the current node.
+        2) They're not needed in the computational graph after the current node.
 
         Args:
             Current node:
@@ -432,6 +430,7 @@ class SSIP(SIP):
 
         return bounds_symbolic_new
 
+    # noinspection PyUnresolvedReferences
     def _adjust_bounds_from_forced(self,
                                    bounds_concrete: Optional[list],
                                    forced_input_bounds: Optional[list]) -> Optional[list]:

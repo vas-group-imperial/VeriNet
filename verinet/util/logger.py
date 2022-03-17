@@ -8,7 +8,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 import logging
 import os
 
-from ..util.config import CONFIG
+from verinet.util.config import CONFIG
 
 
 def get_logger(level, name: str, directory: str, filename: str):

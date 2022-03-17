@@ -7,7 +7,7 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 
 import numbers
 
-from .lin_eq import LinEq
+from verinet.constraints.lin_eq import LinEq
 
 
 class Var:
@@ -37,7 +37,7 @@ class Var:
     def factory(num):
 
         """
-        Used to created several variables at once.
+        Used to create several variables at once.
 
         Args:
             num:

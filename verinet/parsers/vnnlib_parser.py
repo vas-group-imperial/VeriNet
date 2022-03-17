@@ -12,8 +12,8 @@ import re
 
 import numpy as np
 
-from ..verification.objective import Objective
-from ..neural_networks.verinet_nn import VeriNetNN
+from verinet.verification.objective import Objective
+from verinet.neural_networks.verinet_nn import VeriNetNN
 from verinet.constraints.clp_constraint import CLPConstraint
 
 
@@ -35,7 +35,7 @@ class VNNLIBParser:
         statements. Note that each 'and' statement must define lower and upper bounds
         for all input variables.
 
-    Additionally the following must be true:
+    Additionally, the following must be true:
 
         1) All constraints are linear.
         2) Output constraints can not be mixed with input constraints (e.g. X_1 > Y_1).
@@ -76,7 +76,7 @@ class VNNLIBParser:
 
             while True:
 
-                statement = self._get_next_statment(file)
+                statement = self._get_next_statement(file)
 
                 if statement is None:
                     return
@@ -95,7 +95,7 @@ class VNNLIBParser:
                     self._process_statement(statement)
 
     @staticmethod
-    def _get_next_statment(file):
+    def _get_next_statement(file):
 
         """
         Gets the next statement enclosed in brackets. Newlines are striped and multiple
@@ -136,7 +136,7 @@ class VNNLIBParser:
 
         Args:
             statement:
-                The statement as a list with elements and varaibles as elements.
+                The statement as a list with elements and variables as elements.
         """
 
         if statement[0] in ['(<=', '(>=']:
@@ -258,7 +258,7 @@ class VNNLIBParser:
 
             if len(in_constr) == 0 and len(out_constr) > 0:
 
-                if this_constr_type != None and this_constr_type != "in":
+                if this_constr_type is not None and this_constr_type != "in":
                     raise ValueError("Mixed several constraint types in one or-statement.")
                 this_constr_type = 'in'
 
@@ -266,7 +266,7 @@ class VNNLIBParser:
 
             elif len(in_constr) > 0 and len(out_constr) == 0:
 
-                if this_constr_type != None and this_constr_type != "out":
+                if this_constr_type is not None and this_constr_type != "out":
                     raise ValueError("Mixed several constraint types in one or-statement.")
                 this_constr_type = 'out'
 
@@ -274,7 +274,7 @@ class VNNLIBParser:
 
             elif len(in_constr) > 0 and len(out_constr) > 0:
 
-                if this_constr_type != None and this_constr_type != "mixed":
+                if this_constr_type is not None and this_constr_type != "mixed":
                     raise ValueError("Mixed several constraint types in one or-statement.")
                 this_constr_type = 'mixed'
 
@@ -342,7 +342,7 @@ class VNNLIBParser:
                     raise ValueError("Unexpectedly found both global and local output constraints.")
 
         else:
-            raise ValueError("Unexpetedly found both global and local input constraints.")
+            raise ValueError("Unexpectedly found both global and local input constraints.")
 
         return objectives
 
@@ -398,7 +398,7 @@ class VNNLIBParser:
 
         for op, var1, var2 in input_constraints:
 
-            if not(var1.startswith(self._input_var) or ar2.startswith(self._input_var)) or (op not in ['>=', '<=']):
+            if not(var1.startswith(self._input_var) or var2.startswith(self._input_var)) or (op not in ['>=', '<=']):
                 raise ValueError(f"Input constraint: ({op} {var1} {var2}) not recognised.")
 
             if var1.startswith(self._input_var):
@@ -427,7 +427,7 @@ class VNNLIBParser:
         Args:
             objective:
                 The verification objective.
-            constr:
+            constraints:
                 A nested list of constraints. The first dimension is considered to be
                 different 'or' statements for a counterexample, the second dimension
                 'and' statements.

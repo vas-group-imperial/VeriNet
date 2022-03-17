@@ -9,9 +9,9 @@ from enum import Enum
 
 import numpy as np
 
-from ..sip_torch.ssip import SIP
-from .lp_solver import LPSolver
-from ..util.config import CONFIG
+from verinet.sip_torch.ssip import SIP
+from verinet.verification.lp_solver import LPSolver
+from verinet.util.config import CONFIG
 
 
 class Status(Enum):
@@ -84,7 +84,7 @@ class Branch:
 
         Args:
             sip:
-                The SIP object used to get the constrain equations.
+                The SIP object used to get the constraint equations.
             lp_solver:
                 The LPSolver object.
             splits:

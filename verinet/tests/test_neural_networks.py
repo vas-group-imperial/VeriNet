@@ -4,11 +4,8 @@ Unittests for the VeriNetNN classes
 Author: Patrick Henriksen <patrick@henriksen.as>
 """
 
-import os
 import torch
-import numpy as np
 import unittest
-import warnings
 import logging
 
 from verinet.util.config import CONFIG
@@ -152,7 +149,7 @@ class TestVeriNetNN(unittest.TestCase):
     def testReshape(self):
 
         """
-        Test a simple 2-node networks with the Reshape op.
+        Test a simple 2-node networks with the Reshape-op.
         """
 
         model = self.simpleReshape
@@ -166,7 +163,7 @@ class TestVeriNetNN(unittest.TestCase):
     def testMulConstant(self):
 
         """
-        Test a simple 2-node networks with the Reshape op.
+        Test a simple 2-node networks with the Reshape-op.
         """
 
         model = self.simpleMulConstant

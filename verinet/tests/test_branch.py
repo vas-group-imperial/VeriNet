@@ -39,7 +39,7 @@ class TestBranch(unittest.TestCase):
     def test_init(self):
 
         """
-        Tests that some of the variables in init are initialised correctly.
+        Tests that some variables in init are initialised correctly.
         """
 
         self.assertEqual(self.branch.depth, 0)

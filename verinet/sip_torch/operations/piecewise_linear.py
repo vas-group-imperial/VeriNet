@@ -9,8 +9,8 @@ Author: Patrick Henriksen <patrick@henriksen.as>
 import torch
 import torch.nn as nn
 
-from .abstract_operation import AbstractOperation
-from ...util.config import CONFIG
+from verinet.sip_torch.operations.abstract_operation import AbstractOperation
+from verinet.util.config import CONFIG
 
 
 class Relu(AbstractOperation):
@@ -59,13 +59,13 @@ class Relu(AbstractOperation):
     def forward(self, x: torch.Tensor, add_bias: bool = True):
 
         """
-        Propagates trough the operation.
+        Propagates through the operation.
 
         Args:
             x:
                 The input as a NxM tensor where each row is a symbolic bounds for
                 the corresponding node. Can be used on concrete values instead of
-                bound by shaping them into an Nx1 tensor.
+                bound by shaping them into a Nx1 tensor.
             add_bias:
                 If true, the bias is added.
         Returns:
@@ -96,7 +96,7 @@ class Relu(AbstractOperation):
                      calc_nodes: torch.Tensor = None) -> torch.Tensor:
 
         """
-        Propagates the the upper and lower bounding equations of ssip.
+        Propagates the upper and lower bounding equations of ssip.
 
         Args:
             bounds_symbolic_pre:
@@ -168,7 +168,7 @@ class Relu(AbstractOperation):
             relaxations[0, :, 0][mixed_idx] = a
         else:
             larger_up_idx = (upper_bounds_concrete_in + lower_bounds_concrete_in) > 0
-            smaller_up_idx = larger_up_idx == False
+            smaller_up_idx = ~larger_up_idx
 
             relaxations[0, larger_up_idx, 0] = 1
             relaxations[0, smaller_up_idx, 0] = 0
@@ -238,7 +238,7 @@ class Relu(AbstractOperation):
             bounds_concrete_pre:
                 The concrete pre-operation value.
         Returns:
-            A boolean tensor with 'true' for non linear neurons and false otherwise.
+            A boolean tensor with 'true' for non-linear neurons and false otherwise.
         """
 
         return (bounds_concrete_pre[:, 0] < 0) * (bounds_concrete_pre[:, 1] > 0)
