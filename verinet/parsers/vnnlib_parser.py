@@ -118,11 +118,15 @@ class VNNLIBParser:
                 continue
 
             while num_close < num_open:
-                line += re.sub(' +', ' ', file.readline().strip("\n"))
-                re.sub(' +', ' ', line)
-                num_open, num_close = line.count('('), line.count(')')
 
+                new_line = re.sub(' +', ' ', file.readline().strip("\n"))
+                num_open += new_line.count('(')
+                num_close += new_line.count(')')
+                line += new_line
+
+            re.sub(' +', ' ', line)
             line = line.replace('\t', ' ')
+            line = line.replace(')(', ') (')
             line = line.split(' ')
 
             return line
