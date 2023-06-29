@@ -52,8 +52,8 @@ class ONNXParser:
         try:
             import os
             os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-            import dnnv
-            op_graph = dnnv.nn.parse(Path(filepath)).simplify()
+            from dnnv import nn
+            op_graph = nn.parse(Path(filepath)).simplify()
             self._model = op_graph.as_onnx()
         except ModuleNotFoundError:
             logger.warning("DNNV package not found, attempting to proceed without network simplification.")
