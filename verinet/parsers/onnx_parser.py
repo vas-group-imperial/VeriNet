@@ -49,22 +49,24 @@ class ONNXParser:
                 If true, values are stored as 64 bit.
         """
 
-        try:
-            import os
-            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-            from dnnv import nn
-            op_graph = nn.parse(Path(filepath)).simplify()
-            self._model = op_graph.as_onnx()
-        except ModuleNotFoundError:
-            logger.warning("DNNV package not found, attempting to proceed without network simplification.")
-            self._model = onnx.load(filepath)
-        except ImportError:
-            logger.warning("DNNV package not found, attempting to proceed without network simplification.")
-            self._model = onnx.load(filepath)
-        except ValueError as e:
-            logger.info(f"DNNV simplification failed with message:\n'{str(e)}'\n"
-                        f"Attempting to proceed without network simplification.")
-            self._model = onnx.load(filepath)
+        # try:
+        #     import os
+        #     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+        #     from dnnv import nn
+        #     op_graph = nn.parse(Path(filepath)).simplify()
+        #     self._model = op_graph.as_onnx()
+        # except ModuleNotFoundError:
+        #     logger.warning("DNNV package not found, attempting to proceed without network simplification.")
+        #     self._model = onnx.load(filepath)
+        # except ImportError:
+        #     logger.warning("DNNV package not found, attempting to proceed without network simplification.")
+        #     self._model = onnx.load(filepath)
+        # except ValueError as e:
+        #     logger.info(f"DNNV simplification failed with message:\n'{str(e)}'\n"
+        #                 f"Attempting to proceed without network simplification.")
+        #     self._model = onnx.load(filepath)
+
+        self._model = onnx.load(filepath)
 
         self._input_names = input_names
         self._transpose_weights = transpose_fc_weights
